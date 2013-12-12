@@ -1,0 +1,15 @@
+For the background images, I used pictures that I had taken many years ago. To get them to the pi, I used a USB drive. First I created a directory to access the drive:
+
+	sudo mkdir /media/usb
+
+Next I mounted the drive:
+
+	sudo mount /dev/sdb1 /media/usb
+
+Now I used cp command to copy the images I wanted to my web server directory
+
+	sudo cp images.jpg /var/www
+
+Now the images are accessible for my webpage. WHen I was finished, I unmounted the USB by:
+
+	sudo unmount /media/usb
