@@ -6,4 +6,76 @@ This put it in my documents. Then packages needed to be in the same directory as
 
 	sudo mv js /var/www
 
-Now the packages are accessible for the web browser. 
+Now the packages are accessible for the web browser. From there I created the graph vectors to pull from the database:
+
+$dbh = new PDO('sqlite:project.db');
+                $result = $dbh->query('SELECT * FROM current');
+                $i = 0;
+                foreach($result as $row)
+                {
+                
+                        if(empty($row['temp']))
+{       
+}
+                        else{           
+                        if($i<150)
+{$i =$i +1;}
+else
+{
+                                $result_temp[] = $row['temp'];
+                                $result_time[] = $i-150;
+                                $i = $i + 1;
+                                }
+}                            
+           }
+
+           }
+        catch(PDOException $e) {
+                echo $e->getMessage();
+           }
+?>
+
+        $(function () {
+ $('#container').highcharts({
+            title: {
+                text: 'Average Temperature',
+                x: -20 
+            },
+            subtitle: {
+                text: ' ',
+                x: -20
+            },
+            xAxis: {
+                categories: [<?php echo join($result_time, ',') ?>]
+            },
+            yAxis: {
+                title: {
+                    text: 'Temperature (\xB0F)'
+ },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#FFFF00'
+                }]
+            },
+            tooltip: {
+                valueSuffix: '\xB0F'
+            },
+            series: [{
+                name: 'Temperature',
+                data: [<?php echo join($result_temp, ',') ?>]
+            }]
+        });
+});
+    
+
+                </script>
+
+This was in the header file so everything is done on load. To draw the chart, commands 
+
+	<script src="../../js/highcharts.js"></script>
+	<script src="../../js/modules/exporting.js"></script>
+
+	<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+was added at the end of the body so graph is on bottom of page.
