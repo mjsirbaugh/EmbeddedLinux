@@ -1,0 +1,204 @@
+<html>
+        <head>
+                <META HTTP-EQUIV="refresh" CONTENT = "300">
+                <title>Embedded Linux Project</title>
+                <style type="text/css">
+                h1 {text-align: center;opacity: .5;text-transform: uppercase;font-size: 600%; background-image: url(images.jpg)}
+                .names{
+                font-size:xx-large;background-image: url(images.jpg);
+                }
+                </style>
+
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+                <script type="text/javascript">
+<?php
+        try{
+                $dbh = new PDO('sqlite:project.db');
+                $result = $dbh->query('SELECT * FROM current');
+                $i = 0;
+                foreach($result as $row)
+                {
+
+                        if(empty($row['temp']))
+{
+}
+                        else{
+                        if($i<150)
+{$i =$i +1;}
+else
+{
+                                $result_temp[] = $row['temp'];
+                                $result_time[] = $i-150;
+                                $i = $i + 1;
+                                }
+}
+           }
+
+           }
+        catch(PDOException $e) {
+                echo $e->getMessage();
+           }
+?>
+
+        $(function () {
+        $('#container').highcharts({
+            title: {
+                text: 'Average Temperature',
+                x: -20
+            },
+            subtitle: {
+                text: ' ',
+                x: -20
+            },
+            xAxis: {
+                categories: [<?php echo join($result_time, ',') ?>]
+            },
+            yAxis: {
+                title: {
+                    text: 'Temperature (\xB0F)'
+                title: {
+                    text: 'Temperature (\xB0F)'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#FFFF00'
+                }]
+            },
+            tooltip: {
+                valueSuffix: '\xB0F'
+            },
+            series: [{
+                name: 'Temperature',
+                data: [<?php echo join($result_temp, ',') ?>]
+            }]
+        });
+    });
+
+
+                </script>
+        </head>
+        <body>
+                <h1><font = "papyrus" color = "white">Weather Station</font><br>
+                </h1>
+                <p>
+                <?php
+                try{
+                        //Create file "project.db" as database
+                        $db = new PDO('sqlite:project.db');
+                        //Throws exception on error
+                        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+$sql = <<<SQL
+CREATE TABLE IF NOT EXISTS current (
+    temp INTEGER,
+    hum INTEGER,
+    pres INTEGER
+)
+SQL;
+$db->exec($sql);
+$sql = <<<SQL
+CREATE TABLE IF NOT EXISTS average (
+    id INTEGER PRIMARY KEY,
+    ave INTEGER,
+    high INTEGER,
+    low INTEGER,
+    total INTEGER
+)
+SQL;
+    $db->exec($sql);
+ $temp = rand(-10,45);
+        $pres = rand(28,32);
+        $hum = rand(30,95);
+  $sql = <<<SQL
+INSERT INTO current (temp, hum, pres)
+VALUES (:temp, :hum, :pres)
+SQL;
+  $db->exec($sql);
+
+    $stmt = $db->prepare($sql);
+
+        $stmt->bindParam(':temp',$temp);
+        $stmt->bindParam(':hum',$hum);
+        $stmt->bindParam(':pres',$pres);
+
+        $stmt->execute();
+
+
+    $result = $db->query('SELECT * FROM current');
+   foreach($result as $row) {
+        list($id, $message, $createdAt) = $row;
+        $output  = "<br /><br />Current Temperature: $id&degF<br />";
+        $output .= "Humidity: $message%<br />";
+        $output .= "Pressure: $createdAt Hg<br />";
+  //      echo $output;
+    }
+        echo $output;
+
+//Will update ave, compare high and low
+        $result = $db->query('SELECT * FROM average');
+        foreach($result as $row){
+        list($id, $ave, $high,$low,$total) = $row;
+        break;
+         }
+        $ave = ($temp + $ave);
+        if($high < $temp)
+        {
+                $high = $temp;
+        }
+        if($low>$temp)
+        {
+                $low = $temp;
+        }
+        $total = $total + 1;
+        $current_ave = round($ave/$total,2);
+        echo "High: $high&degF<br />";
+        echo "Low: $low&degF<br />";
+        echo "Todays Average: $current_ave&degF<br />";
+         $stmt = $db->prepare("UPDATE average SET ave = :ave WHERE ID = '1'");
+         $stmt->bindParam(':ave', $ave);
+         $stmt->execute();
+         $stmt = $db->prepare("UPDATE average SET high = :high WHERE ID = '1'");
+         $stmt->bindParam(':high', $high);
+         $stmt->execute();
+         $stmt = $db->prepare("UPDATE average SET low = :low WHERE ID = '1'");
+         $stmt->bindParam(':low', $low);
+         $stmt->execute();
+         $stmt = $db->prepare("UPDATE average SET total = :total WHERE ID = '1'");
+         $stmt->bindParam(':total', $total);
+         $stmt->execute();
+        echo "";
+ echo "<br />";
+ echo "<br />";
+ echo "<br />";
+ echo "<br />";
+ echo "<br />";
+ echo "<br />";
+ echo "<br />";
+ echo "<br />";
+
+}
+        catch(PDOException $e){
+                echo $e->getMessage();
+                echo $e->getTraceAsString();
+}
+?>
+</p>
+<style type="text/css"> p {text-align: center; font-style: italic;font-family: Impact;font-size: 150%;color: black;
+        background-image: url(DSC_0003.JPG);
+}
+.names{
+        font-size: large;color: navy;
+        background-image: url(DSC_0003.JPG);
+}
+ </style>
+
+<!--
+ <style type="text/css"> h2 {background: black; color: white}</style><marquee><h2>This is a Severe Storm warning for Ulster County</h2></marquee>
+-->
+<script src="../../js/highcharts.js"></script>
+<script src="../../js/modules/exporting.js"></script>
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+</body>
+</html>

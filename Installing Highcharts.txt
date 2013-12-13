@@ -1,0 +1,9 @@
+To set up high charts, which is what I used to chart the average temperature for a period of time. FIrst I downloaded the packages containing essential information for forming the graphs. The packages were in a zip file on my personal desktop. So I unzipped the file. Then on the command line I sent the files from my computer to the pi:
+
+	sch -rv js pi@24.161.98.162:Documents
+
+This put it in my documents. Then packages needed to be in the same directory as the webpage that is accessing it so I moved the files by:
+
+	sudo mv js /var/www
+
+Now the packages are accessible for the web browser. 

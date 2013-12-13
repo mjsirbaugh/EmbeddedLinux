@@ -1,0 +1,24 @@
+Git hub 
+
+install github
+
+	sudo apt-get instal git
+
+set up ssh keys
+		cd ~/.ssh/
+	there were no ssh keys on file so created the directory
+		
+		mkdir ~/.ssh/
+
+create key
+	ssh-keygen -t rsa -C “sirbaugm1@hawkmail.newpaltz.edu”
+	ssh-add id_rsa
+copy the public key to the clip board
+	first have to instal xclip
+		sudo apt-get install xclip
+	xclip -sel clip < ~/.ssh/id_rsa.pub
+	problem was the clip board wasnt connecting
+		used cat to display the key on command line then copied it wiith mouse 
+			cat ~/.ssh/”ssh-add id_rsa”
+paste in github and create the key
+
